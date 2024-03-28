@@ -10,7 +10,7 @@ type IShowModal = {
 };
 
 export const EmptyComments: React.FC<IShowModal> = ({ showModalReview }) => (
-    <>
+    <React.Fragment>
         <div className='comments-empty'>
             <div className='text-wrapper'>
                 <Title level={3}>Оставьте свой отзыв первым</Title>
@@ -26,6 +26,6 @@ export const EmptyComments: React.FC<IShowModal> = ({ showModalReview }) => (
                 Написать отзыв
             </Button>
         </div>
-    </>
+    </React.Fragment>
 );
 

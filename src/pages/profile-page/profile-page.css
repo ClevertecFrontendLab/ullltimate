@@ -1,0 +1,39 @@
+.info-wrapper{
+    display: flex;
+    gap: var(--unit-24);
+}
+.info{
+    width: 350px;
+}
+.alert{
+    position: fixed !important;
+    bottom: 70px;
+    left: 40%;
+    max-width: 400px;
+}
+.profile-subtitle{
+    margin-bottom: var(--unit-24);
+}
+
+@media screen and (max-width: 370px) {
+    .info-wrapper{
+        flex-wrap: wrap-reverse;
+    }
+    .alert{
+        max-width: 310px;
+        left: 7%;
+    }
+    .profile .ant-upload-list-item{
+        width: 295px;
+    }
+    .profile .ant-form-item-control-input-content{
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .profile-avatar__subtitle{
+        font-size: 12px;
+        margin: 0 var(--unit-16) 0 0;
+    }
+}

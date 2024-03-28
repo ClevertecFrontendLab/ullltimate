@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Form, Input, Checkbox, Button } from 'antd';
-import { Rule } from 'antd/lib/form';
-import { useAppDispatch, useAppSelector } from '@hooks/typed-react-redux-hooks';
-import { useCheckEmailMutation, useLoginMutation } from '@services/auth';
-import { increment, userSelector } from '@redux/reducers/user-slice';
-import { saveToken } from '@redux/reducers/token-slice';
-import { Loader } from '@components/loader/Loader';
 import { ButtonGoogle } from '@components/content-auth-page/buttons/button-google';
-import { regEmail, rulesPassword, rulesEmail } from '@constants/validation';
+import { Loader } from '@components/loader/loader';
 import { PATHS } from '@constants/paths';
+import { regEmail, rulesEmail,rulesPassword } from '@constants/validation';
+import { useAppDispatch, useAppSelector } from '@hooks/typed-react-redux-hooks';
+import { saveToken } from '@redux/reducers/token-slice';
+import { increment, userSelector } from '@redux/reducers/user-slice';
+import { useCheckEmailMutation, useLoginMutation } from '@services/auth';
+import { Button,Checkbox, Form, Input } from 'antd';
+import { Rule } from 'antd/lib/form';
 
 import './logIn.css';
 
@@ -32,9 +32,11 @@ export const LogIn: React.FC = () => {
         login({ email: values.email, password: values.password })
             .unwrap()
             .then((res) => {
-                values.remember
-                    ? localStorage.setItem('token', res.accessToken)
-                    : dispatch(saveToken(res.accessToken));
+                if(values.remember){
+                    localStorage.setItem('token', res.accessToken)
+                } else {
+                    dispatch(saveToken(res.accessToken))
+                };
                 dispatch(saveToken(res.accessToken));
                 dispatch(increment({ email: values.email, password: values.password }));
                 navigate(PATHS.MAIN);
@@ -71,7 +73,7 @@ export const LogIn: React.FC = () => {
     }, [check, location.state, navigate, user.email]);
 
     return (
-        <>
+        <React.Fragment>
             {(isLoadingLogin || isLoadingEmail) && <Loader />}
             <Form name='normal_login' className='login-form' onFinish={onFinish}>
                 <Form.Item
@@ -82,10 +84,11 @@ export const LogIn: React.FC = () => {
                             validator: (_: Rule, value: string) => {
                                 if (regEmail.test(value)) {
                                     dispatch(increment({ email: value, password: '' }));
+
                                     return Promise.resolve(setForgotDisabled(false));
-                                } else {
-                                    return Promise.reject(setForgotDisabled(true));
                                 }
+ 
+                                    return Promise.reject(setForgotDisabled(true));
                             },
                         },
                     ].flat()}
@@ -100,7 +103,7 @@ export const LogIn: React.FC = () => {
                     />
                 </Form.Item>
                 <Form.Item>
-                    <Form.Item name='remember' valuePropName='checked' noStyle>
+                    <Form.Item name='remember' valuePropName='checked' noStyle={true}>
                         <Checkbox data-test-id='login-remember'>Запомнить меня</Checkbox>
                     </Form.Item>
                     <Button
@@ -127,6 +130,6 @@ export const LogIn: React.FC = () => {
 
                 <ButtonGoogle />
             </Form>
-        </>
+        </React.Fragment>
     );
 };

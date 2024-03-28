@@ -1,5 +1,5 @@
 import { RootState } from '@redux/configure-store';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { createSlice,PayloadAction } from '@reduxjs/toolkit';
 
 type ScreenSizeState = {
     screenSize: number;
@@ -22,4 +22,4 @@ export const screenSizeSlice = createSlice({
 export const { saveSceenSize } = screenSizeSlice.actions;
 export const screenSizeSelector = (state: RootState) => state.screenSizeReducer;
 
-export default screenSizeSlice.reducer;
+export const screenSizeReducer = screenSizeSlice.reducer;

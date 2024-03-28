@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Form, Input, Button } from 'antd';
+import { ButtonGoogle } from '@components/content-auth-page/buttons/button-google';
+import { Loader } from '@components/loader/loader';
+import { PATHS } from '@constants/paths';
+import { rulesEmail, rulesPassword, rulesRepeatPassword, validateMessage } from '@constants/validation';
 import { useAppDispatch, useAppSelector } from '@hooks/typed-react-redux-hooks';
 import { increment, userSelector } from '@redux/reducers/user-slice';
 import { useSignupMutation } from '@services/auth';
-import { Loader } from '@components/loader/Loader';
-import { ButtonGoogle } from '@components/content-auth-page/buttons/button-google';
-import { rulesEmail, rulesPassword, rulesRepeatPassword, validateMessage } from '@constants/validation';
-import { PATHS } from '@constants/paths';
 import { ValuesSignupForm } from '@tstypes/types';
+import { Button,Form, Input } from 'antd';
 
 import './signUp.css';
 
@@ -48,8 +48,9 @@ export const SignUp: React.FC = () => {
             onFinish(user);
         }
     }, [location.state, onFinish, user]);
+
     return (
-        <>
+        <React.Fragment>
             {isLoading && <Loader />}
             <Form
                 name='normal_registration'
@@ -78,7 +79,7 @@ export const SignUp: React.FC = () => {
                         data-test-id='registration-confirm-password'
                     />
                 </Form.Item>
-                <Form.Item shouldUpdate>
+                <Form.Item shouldUpdate={true}>
                     {() => (
                         <Button
                             type='primary'
@@ -96,6 +97,6 @@ export const SignUp: React.FC = () => {
                 </Form.Item>
                 <ButtonGoogle />
             </Form>
-        </>
+        </React.Fragment>
     );
 };

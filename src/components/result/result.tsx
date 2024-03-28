@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Typography, Button } from 'antd';
 import { PATHS } from '@constants/paths';
+import { Button,Typography } from 'antd';
 
 import './result.css';
 
@@ -28,7 +28,7 @@ export const Result: React.FC<PropsResult> = ({
     const location = useLocation();
 
     useEffect(() => {
-        !location.state ? navigate(PATHS.AUTH) : '';
+        if(!location.state) navigate(PATHS.AUTH);
     }, [location.state, navigate]);
 
     return (
@@ -37,7 +37,7 @@ export const Result: React.FC<PropsResult> = ({
             <Title level={3} className='result-title'>
                 {title}
             </Title>
-            <Text disabled className='result-text'>
+            <Text disabled={true} className='result-text'>
                 {text}
             </Text>
             <Button
@@ -45,8 +45,8 @@ export const Result: React.FC<PropsResult> = ({
                 className='result-button'
                 data-test-id={dataAtribute}
                 onClick={() => {
-                    navigate('.', { replace: true }),
-                        navigate(btnPath, { state: location.pathname });
+                    navigate('.', { replace: true });
+                    navigate(btnPath, { state: location.pathname });
                 }}
             >
                 {btnText}

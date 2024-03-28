@@ -45,6 +45,11 @@
     fill: transparent;
 }
 
+.comment .ant-comment-avatar img{
+    width: 42px;
+    height: 42px;
+}
+
 @media screen and (max-width: 500px) {
     
     .comment .ant-comment-inner {

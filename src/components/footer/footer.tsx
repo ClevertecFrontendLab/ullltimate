@@ -1,10 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Row, Col, Button, Card } from 'antd';
 import { AndroidFilled, AppleFilled } from '@ant-design/icons';
-import { Loader } from '@components/loader/Loader';
-import { useLazyGetFeedbacksQuery } from '@services/feedbacks';
+import { Loader } from '@components/loader/loader';
 import { PATHS } from '@constants/paths';
+import { useLazyGetFeedbacksQuery } from '@services/feedbacks';
+import { Button, Card,Col, Row } from 'antd';
 
 import './footer.css';
 
@@ -28,10 +28,10 @@ export const Footer: React.FC = () => {
     };
 
     return (
-        <>
+        <React.Fragment>
             {isLoading && <Loader />}
             <footer className='footer'>
-                <Row justify={'space-between'} wrap={true} style={{ flexWrap: 'wrap-reverse' }}>
+                <Row justify='space-between' wrap={true} style={{ flexWrap: 'wrap-reverse' }}>
                     <Col flex='none'>
                         <Button type='link' onClick={showReviews} data-test-id='see-reviews'>
                             Смотреть отзывы
@@ -59,6 +59,6 @@ export const Footer: React.FC = () => {
                     </Col>
                 </Row>
             </footer>
-        </>
+        </React.Fragment>
     );
 };

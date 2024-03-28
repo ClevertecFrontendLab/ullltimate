@@ -1,6 +1,7 @@
 import { CheckCircleFilled, CloseCircleFilled, WarningFilled } from '@ant-design/icons';
-import { PATHS } from './paths';
 import { ResultData } from '@tstypes/result-data';
+
+import { PATHS } from './paths';
 
 export const resultData: ResultData = {
     error_login: {
@@ -60,7 +61,7 @@ export const resultData: ResultData = {
         dataAtribute: 'check-retry-button',
     },
     error_check_email: {
-        icon: <img src='/error.svg' />,
+        icon: <img src='/error.svg' alt='error'/>,
         title: 'Что-то пошло не так',
         text: 'Произошла ошибка, попробуйте отправить форму ещё раз.',
         btnText: 'Назад',

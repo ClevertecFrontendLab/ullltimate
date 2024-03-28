@@ -1,0 +1,147 @@
+.settings-title{
+    font-size: var(--font-size-20);
+}
+.settings .site-card-wrapper .ant-card-head,
+.settings .site-card-wrapper .ant-card-body{
+    padding: 0;
+}
+.settings-card{
+    max-width: 240px;
+    text-align: center;
+}
+.settings-card__img{
+    width: 100%;
+}
+.settings .site-card-wrapper .ant-card-body .setting-card__btn{
+    margin: 25px 0;
+    height: 42px;
+}
+.settings  .settings-list{
+    max-width: 500px;
+    margin-top: var(--unit-24);
+}
+.settings .ant-list-split .ant-list-item {
+    border-bottom: none;
+}
+.settings-item__text{
+    margin: 0;
+    font-weight: var(--font-weight-700);
+}
+.settings .ant-list-split .ant-list-item{
+    padding: 16px 0 0;
+}
+.description-tariffs .ant-table table {
+    border-spacing: 10px 0;
+	border-collapse: separate;
+}
+.description-tariffs .ant-table-cell{
+    padding: 8px 0;
+    text-align: center;
+    border: none;
+}
+.description-tariffs th.ant-table-cell{
+    min-width: 55px;
+    margin: 16px 5px;
+}
+.description-tariffs tr > td:first-child{
+    text-align: left;
+}
+.description-tariffs .ant-table-thead > tr > th:first-child {
+    background: transparent;
+}
+.description-tariffs .ant-table-thead > tr > th:nth-child(2){
+    background: var(--color-bg-grey);
+}
+.description-tariffs .ant-table-thead > tr > th:last-child{
+    background: var(--color-bg-blue);
+}
+.description-tariffs .ant-table-tbody > tr.ant-table-row:hover > td, 
+.ant-table-tbody > tr > td.ant-table-cell-row-hover {
+    background: transparent;
+}
+.description-tariffs .ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+    background: transparent;
+}
+.costs-tariff span,
+.costs-tariff span.ant-radio + *{
+    padding: 0px;
+}
+.costs-tariff .ant-radio-wrapper{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 300px;
+}
+.tariff-cost{
+    font-weight: 600;
+    margin-right: var(--unit-24);
+}
+.tariff-title{
+    margin-right: 150px;
+}
+.costs-tariff-title{
+    font-weight: var(--font-weight-700);
+    font-size: var(--font-size-14);
+    padding: 86px 0 var(--unit-24) 8px;
+    margin: 0;
+}
+.costs-tariff .ant-space-vertical{
+    gap: var(--unit-16) !important;
+}
+.modal-tariff-result .ant-result-success .ant-result-icon > .anticon{
+    color: var(--color-primary);
+}
+.modal-tariff-result .ant-result {
+    padding: 48px var(--unit-8);
+}
+.tariff-pro-title{
+    text-align: center;
+    padding: 14px 40px;
+    margin: var(--unit-24) 0;
+    background: var(--color-bg-blue);
+    font-size: var(--unit-16);
+    font-weight: var(--font-weight-500);
+    color: var(--color-primary-dark);
+}
+.site-card-wrapper .ant-card-extra .ant-btn-link{
+    color: var(--color-primary);
+}
+.modal-tariff-result .ant-result-title{
+    font-weight: var(--font-weight-500);
+}
+.settings-card .ant-btn-text{
+    color: var(--color-primary-dark);
+    font-size: var(--unit-16);
+    font-weight: var(--font-weight-500);
+}
+
+@media screen and (max-width: 370px) {
+    .settings-card{
+        max-width: 315px;
+    }
+    .site-card-wrapper .ant-row .ant-col:first-child{
+        margin-bottom: 10px;
+    }
+    .settings-item__text{
+        max-width: 176px;
+    }
+    .site-card-wrapper .ant-card-head-title{
+        text-align: left;
+        padding-left: var(--unit-24);
+    }
+    .description-tariffs .ant-table-cell{
+        padding: 4px 0;
+    }
+    .costs-tariff-title{
+        padding: var(--unit-24) 0 12px 8px;
+    }
+    .modal-tariff-result .ant-result {
+        padding: var(--unit-16) 0;
+    }
+    .modal-tariff-result .ant-result-title{
+        line-height: 31.2px;
+        max-width: 200px;
+        margin: 0 auto;
+    }
+}

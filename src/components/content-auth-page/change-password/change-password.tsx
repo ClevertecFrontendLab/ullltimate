@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button, Form, Input, Typography } from 'antd';
-import { useAppDispatch, useAppSelector } from '@hooks/typed-react-redux-hooks';
-import { useChangePassordMutation } from '@services/auth';
-import { increment, userSelector } from '@redux/reducers/user-slice';
-import { Loader } from '@components/loader/Loader';
+import { Loader } from '@components/loader/loader';
 import { PATHS } from '@constants/paths';
-import { validateMessage, rulesPassword, rulesRepeatPassword } from '@constants/validation';
+import { rulesPassword, rulesRepeatPassword,validateMessage } from '@constants/validation';
+import { useAppDispatch, useAppSelector } from '@hooks/typed-react-redux-hooks';
+import { increment, userSelector } from '@redux/reducers/user-slice';
+import { useChangePassordMutation } from '@services/auth';
 import { RequestChangePass } from '@tstypes/api';
+import { Button, Form, Input, Typography } from 'antd';
 
 import './change-password.css';
 
@@ -41,15 +41,15 @@ export const ChangePassword: React.FC = () => {
         if (location.state === PATHS.RESULT.ERROR_CHANGE_PASSWORD) {
             onFinish({ password: user.password, confirmPassword: user.password });
         } else if (
-            location.state != PATHS.CONFIRM_EMAIL &&
-            location.state != PATHS.RESULT.ERROR_CHANGE_PASSWORD
+            location.state !== PATHS.CONFIRM_EMAIL &&
+            location.state !== PATHS.RESULT.ERROR_CHANGE_PASSWORD
         ) {
             navigate(PATHS.AUTH);
         }
     }, [location.state, navigate, onFinish, user.password]);
 
     return (
-        <>
+        <React.Fragment>
             {isLoading && <Loader />}
             <Form
                 name='normal_registration'
@@ -79,7 +79,7 @@ export const ChangePassword: React.FC = () => {
                     />
                 </Form.Item>
 
-                <Form.Item shouldUpdate>
+                <Form.Item shouldUpdate={true}>
                     {() => (
                         <Button
                             type='primary'
@@ -92,6 +92,6 @@ export const ChangePassword: React.FC = () => {
                     )}
                 </Form.Item>
             </Form>
-        </>
+        </React.Fragment>
     );
 };

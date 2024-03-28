@@ -1,33 +1,34 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Badge, Button, Calendar, Drawer, Empty, Modal, Select } from 'antd';
 import { ArrowLeftOutlined, CloseOutlined, EditOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import type { CalendarMode } from 'antd/es/calendar/generateCalendar';
-import type { Moment } from 'moment';
-import { Content } from 'antd/lib/layout/layout';
-import ru_Ru from 'antd/es/calendar/locale/ru_RU';
-import moment from 'moment';
-import 'moment/locale/ru';
-import { Header } from '@components/header/header';
-import { Loader } from '@components/loader/Loader';
 import { DrawerForm } from '@components/content-calendar-page/drawer-form/drawer-form';
+import { Header } from '@components/header/header';
+import { Loader } from '@components/loader/loader';
+import { colorTrainings } from '@constants/calendar';
+import { useAppDispatch, useAppSelector } from '@hooks/typed-react-redux-hooks';
+import { useResize } from '@hooks/use-resize';
+import { saveSceenSize, screenSizeSelector } from '@redux/reducers/resize-slice';
+import { addExercises, Exercise, removeExercises, resetExercises, saveTrainingDate, saveTrainingId, saveTrainingName, setExercises, setIsImplementation, trainingSelector } from '@redux/reducers/training-slice';
 import { useGetTrainingListQuery } from '@services/catalogs';
 import { Training, useCreateTrainingMutation, useGetTrainingQuery, useUpdateTrainingMutation } from '@services/trainings';
-import { colorTrainings } from '@constants/calendar';
-import { Exercise, addExercises, removeExercises, resetExercises, saveTrainingDate, saveTrainingId, saveTrainingName, setExercises, setIsImplementation } from '@redux/reducers/training-slice';
-import { useAppDispatch, useAppSelector } from '@hooks/typed-react-redux-hooks';
-import { trainingSelector } from '@redux/reducers/training-slice';
-import { useResize } from '@hooks/useResize';
-import { saveSceenSize, screenSizeSelector } from '@redux/reducers/resize-slice';
+import { Badge, Button, Calendar, Drawer, Empty, Modal, Select } from 'antd';
+import ru_Ru from 'antd/es/calendar/locale/ru_RU';
+import { Content } from 'antd/lib/layout/layout';
+import type { Moment } from 'moment';
+import moment from 'moment';
+
 import './calendar-page.css';
 import './modal-training.css';
 
+import 'moment/locale/ru';
+
 moment.locale('ru');
 moment.updateLocale('ru', {
-    weekdaysMin : ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+    weekdaysMin : ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
     monthsShort : ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'], 
     week: {dow: 1}
   })
 
+// eslint-disable-next-line complexity
 export const CalendarPage: React.FC = () => {
     const {screenSize} = useAppSelector(screenSizeSelector);
     const { data: trainings } = useGetTrainingQuery();
@@ -53,13 +54,12 @@ export const CalendarPage: React.FC = () => {
     const [updateTraining] = useUpdateTrainingMutation();
     const windowSize = useResize();
 
-    const onPanelChange = (value: Moment, mode: CalendarMode) => {
-        console.log('panel', value.format('DD.MM.YYYY'), mode);
+    const onPanelChange = () => {
         setIsModalOpen(false);
     };
 
     useEffect(() => {
-        trainings &&
+        if(trainings)
             setTrainingsForDay(
                 trainings.filter(
                     (e) => new Date(e.date).toLocaleString('ru').split(',')[0] === selectedDate,
@@ -69,6 +69,7 @@ export const CalendarPage: React.FC = () => {
 
     useEffect(() => {
         const exersices = trainingsForDay.find((train) => train.name === valueEditTrain);
+
         if (exersices) {
             setExercisesForDay(exersices.exercises);
         } else {
@@ -124,7 +125,7 @@ export const CalendarPage: React.FC = () => {
     }, [refetch]);
 
     useEffect(() => {
-        errorList && modalError(true);
+        if(errorList) modalError(true);
     }, [errorList, modalError]);
 
     type ListData = {
@@ -134,8 +135,11 @@ export const CalendarPage: React.FC = () => {
 
     const getListData = (value: Moment) => {
         const listData: ListData[] = [];
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         trainings &&
             trainingList &&
+            // eslint-disable-next-line array-callback-return
             trainings.map((el) => {
                 if (
                     value.format('DD.MM.YYYY') ===
@@ -153,10 +157,12 @@ export const CalendarPage: React.FC = () => {
 
     const dateCellRender = (value: Moment) => {
         const listData = getListData(value);
+
         return (
             screenSize > 630 ?
                 <ul className='events' style={{ listStyleType: 'none' }}>
                     {listData.map((item: ListData, i: number) => (
+                        // eslint-disable-next-line react/no-array-index-key
                         <li key={i}>
                             <Badge color={item.color} text={item.content} />
                         </li>
@@ -168,16 +174,18 @@ export const CalendarPage: React.FC = () => {
         );
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-shadow
     const showModal = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, date: Moment) => {
         dispatch(resetExercises());
         dispatch(saveTrainingDate(date.toJSON()));
         setIndexesForDelete([])
         setIsCreateExercise(false);
-        (screenSize > 630) ? e.stopPropagation() : '';
+        if(screenSize > 630) e.stopPropagation();
         setSelectedDate(date.format('DD.MM.YYYY'));
         setSelectedDateInvalidFormat(date.format('YYYY-MM-DD'));
         setSelectedWeekDay(date.day());
         const elem = e.target as Element;
+
         setElemForCoordinates(elem);
         setIsModalOpen(true);
     };
@@ -188,20 +196,21 @@ export const CalendarPage: React.FC = () => {
         } else if (elem.tagName === 'LI'){
             setCoordinates(((((elem.parentNode as Element).parentNode as Element).parentNode as Element).parentNode as Element).getBoundingClientRect());
         }else {
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
             (elem.parentNode as Element) &&
             setCoordinates(((elem.parentNode as Element).parentNode as Element).getBoundingClientRect());
         }
     },[]);
 
     useEffect(() => {
-        if(screenSize != windowSize.windowSize){
+        if(screenSize !== windowSize.windowSize){
             dispatch(saveSceenSize(windowSize.windowSize))
         }
     },[dispatch, screenSize, windowSize])
 
     useEffect(() => {
         if(screenSize > 630){
-            elemForCoordinates && defineCoordinates(elemForCoordinates);
+            if(elemForCoordinates) defineCoordinates(elemForCoordinates);
         }
     },[defineCoordinates, elemForCoordinates, screenSize])
 
@@ -211,7 +220,7 @@ export const CalendarPage: React.FC = () => {
     };
 
     const handleChange = (value: string) => {
-        trainingList &&
+        if(trainingList)
             setValueEditTrain(trainingList.filter((train) => train.key === value)[0].name);
         dispatch(resetExercises());
     };
@@ -233,22 +242,29 @@ export const CalendarPage: React.FC = () => {
         setIsCreateExercise(true);
         setValueEditTrain('Выбор типа тренировки');
     };
+
     useEffect(() => {
-        trainingsForDay.length === 5 ||
-        moment(selectedDateInvalidFormat).isSameOrBefore(moment(), 'day')
-            ? setDisabledCreateTraining(true)
-            : setDisabledCreateTraining(false);
+        if(trainingsForDay.length === 5 ||
+        moment(selectedDateInvalidFormat).isSameOrBefore(moment(), 'day')){
+            setDisabledCreateTraining(true)
+        } else {
+            setDisabledCreateTraining(false);
+        }
     }, [trainingsForDay, selectedDateInvalidFormat]);
 
     useEffect(() => {
-        moment(selectedDateInvalidFormat).isSameOrBefore(moment(), 'day') 
-            ? dispatch(setIsImplementation(true))
-            : dispatch(setIsImplementation(false))
+        if(moment(selectedDateInvalidFormat).isSameOrBefore(moment(), 'day') ){
+            dispatch(setIsImplementation(true))
+        } else {
+            dispatch(setIsImplementation(false))
+        }
     },[selectedDateInvalidFormat, dispatch])
 
     useEffect(() => {
         const training = trainingsForDay.find((e) => e.name === valueEditTrain);
+
         if (training) {
+            // eslint-disable-next-line no-underscore-dangle
             dispatch(saveTrainingId(training._id));
             dispatch(resetExercises());
             dispatch(setExercises(training.exercises));
@@ -271,15 +287,16 @@ export const CalendarPage: React.FC = () => {
             .then(() => {setIsCreateExercise(false)})
             .catch(() => {
                 modalError(false); 
-                const exersicess = trainingsForDay.find((train) => train.name === valueEditTrain)
-                console.log(exersicess?.exercises)
+                const exersicess = trainingsForDay.find((train) => train.name === valueEditTrain);
+                
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                 exersicess && (dispatch(setExercises(exersicess.exercises)), setExercisesForDay(exersicess.exercises))
             });
     };
     const save = () => id === '' ?  createTrain() : updateTrain();
 
     return (
-        <>
+        <React.Fragment>
             {isLoading && <Loader />}
             <Header />
             <Content style={{ padding: `${screenSize <=360 ? 0 : 24}`, background: 'var(--color-bg-blue)', marginBottom: `${screenSize < 370 ? '192px' : '42px'}` }}>
@@ -287,7 +304,10 @@ export const CalendarPage: React.FC = () => {
                     onPanelChange={onPanelChange}
                     locale={ru_Ru}
                     fullscreen={screenSize >= 630}
+                    // eslint-disable-next-line react/no-unstable-nested-components, @typescript-eslint/no-shadow
                     dateFullCellRender={(date) => (
+                        
+                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                         <div
                             className='date-cell'
                             style={{ zIndex: 0, background: 'var(--color-bg-card)' }}
@@ -311,7 +331,7 @@ export const CalendarPage: React.FC = () => {
             <div
                 className='modal-training'
                 data-test-id={`${
-                    !isCreateExercise ? 'modal-create-training' : 'modal-create-exercise'
+                    isCreateExercise ? 'modal-create-exercise' : 'modal-create-training' 
                 }`}
                 style={{
                     display: `${isModalOpen ? 'block' : 'none'}`,
@@ -328,9 +348,95 @@ export const CalendarPage: React.FC = () => {
                     boxShadow: '0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 9px 28px 8px rgba(0, 0, 0, 0.05)'
                 }}
             >
-                {!isCreateExercise ? (
-                    <>
-                        <div className='modal-title' style={{marginBottom: `${trainingsForDay?.length != 0 ? '14px' : '0px'}`}}>
+                {isCreateExercise ? (
+                    <React.Fragment>
+                        <div className='create-exercise'>
+                            <ArrowLeftOutlined
+                                data-test-id='modal-exercise-training-button-close'
+                                style={{ width: 16, marginTop: 12 }}
+                                onClick={() => setIsCreateExercise(false)}
+                            />
+                            <Select
+                                defaultValue={valueEditTrain}
+                                data-test-id='modal-create-exercise-select'
+                                style={{ width: `${screenSize <630 ? '270px' : '228px'}`, marginTop: 12 }}
+                                onChange={handleChange}
+                                options={trainingList
+                                    ?.map((e) => ({ value: e.key, label: e.name }))
+                                    // eslint-disable-next-line @typescript-eslint/no-shadow
+                                    .filter((name) =>
+                                        trainingsForDay.every(
+                                            (train) => !name.label.includes(train.name),
+                                        ),
+                                    )}
+                            />
+                        </div>
+                        <div className='modal-content'>
+                            {
+                            // eslint-disable-next-line no-negated-condition
+                            valueEditTrain !== 'Выбор типа тренировки' ? (
+                                <ul style={{ padding: '12px 0' }}>
+                                    {exercisesForDay
+                                        .filter((e) => e.name !== '')
+                                        .map((e, i) => (
+                                            // eslint-disable-next-line react/no-array-index-key
+                                            <li key={i} className='list-item'>
+                                                <p style={{color: 'var(--color-disabled)'}}>{e.name}</p>
+                                                <Button type='link' 
+                                                        disabled={e.isImplementation}
+                                                        data-test-id={`modal-update-training-edit-button${i}`}
+                                                        onClick={() => {
+                                                        dispatch(setExercises(exercisesForDay));
+                                                        setIsEditTraining(true);
+                                                        setOpenDrawer(true);
+                                                    }}>
+                                                    <EditOutlined
+                                                    />
+                                                </Button>
+                                            </li>
+                                        ))}
+                                </ul>
+                            ) : (
+                                <Empty
+                                    image='https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg'
+                                    imageStyle={{ height: 32, margin:16 }}
+                                    description={false}
+                                />
+                            )}
+                        </div>
+                        <Button
+                            type='text'
+                            className='modal-btn btn-text'
+                            disabled={!(valueEditTrain !== 'Выбор типа тренировки')}
+                            onClick={() => {
+                                dispatch(setExercises(exercisesForDay));
+                                dispatch(addExercises());
+                                if(exercisesForDay.length === 0){
+                                    setIsEditTraining(false);
+                                } else {
+                                    setIsEditTraining(true);
+                                }
+                                setIsEditTraining(false);
+                                showDrawer();
+                            }}
+                        >
+                            Добавить упражнения
+                        </Button>
+                        <Button
+                            type='link'
+                            className='modal-btn'
+                            disabled={exercisesForDay.filter((e) => e.name !== '').length === 0}
+                            onClick={save}
+                        >
+                            {isEditTraining ? 'Сохранить изменения' : 'Сохранить'}
+                        </Button>
+                    </React.Fragment>
+                ):(
+                    <React.Fragment>
+                        <div className='modal-title' style={{marginBottom: `${
+                                // eslint-disable-next-line no-negated-condition
+                                trainingsForDay?.length !== 0 ? '14px' : '0px'
+                            }`}}>
                             <h4 className='title'>Тренировки на {selectedDate}</h4>
                             <CloseOutlined
                                 data-test-id='modal-create-training-button-close'
@@ -346,10 +452,16 @@ export const CalendarPage: React.FC = () => {
                         >
                             Нет активных тренировок
                         </p>
-                        <div className='modal-content' style={{minHeight: `${trainingsForDay?.length != 0 ? '84px' : '64px'}`}}>
+                        <div className='modal-content' style={{minHeight: `${
+                                // eslint-disable-next-line no-negated-condition
+                                trainingsForDay?.length !== 0 ? '84px' : '64px'
+                            }`}}>
                             <ul className='modal-events' style={{ listStyleType: 'none' }}>
-                                {trainingsForDay.length != 0 ? (
+                                {
+                                // eslint-disable-next-line no-negated-condition
+                                trainingsForDay.length !== 0 ? (
                                     trainingsForDay.map((e, i) => (
+                                        // eslint-disable-next-line no-underscore-dangle
                                         <li key={e._id} className='list-item'>
                                             <Badge
                                                 color={
@@ -388,84 +500,7 @@ export const CalendarPage: React.FC = () => {
                         >
                             Создать тренировку
                         </Button>
-                    </>
-                ) : (
-                    <>
-                        <div className='create-exercise'>
-                            <ArrowLeftOutlined
-                                data-test-id='modal-exercise-training-button-close'
-                                style={{ width: 16, marginTop: 12 }}
-                                onClick={() => setIsCreateExercise(false)}
-                            />
-                            <Select
-                                defaultValue={valueEditTrain}
-                                data-test-id='modal-create-exercise-select'
-                                style={{ width: `${screenSize <630 ? '270px' : '228px'}`, marginTop: 12 }}
-                                onChange={handleChange}
-                                options={trainingList
-                                    ?.map((e) => ({ value: e.key, label: e.name }))
-                                    .filter((name) =>
-                                        trainingsForDay.every(
-                                            (train) => !name.label.includes(train.name),
-                                        ),
-                                    )}
-                            />
-                        </div>
-                        <div className='modal-content'>
-                            {valueEditTrain != 'Выбор типа тренировки' ? (
-                                <ul style={{ padding: '12px 0' }}>
-                                    {exercisesForDay
-                                        .filter((e) => e.name != '')
-                                        .map((e, i) => (
-                                            <li key={i} className='list-item'>
-                                                <p style={{color: 'var(--color-disabled)'}}>{e.name}</p>
-                                                <Button type='link' 
-                                                        disabled={e.isImplementation}
-                                                        data-test-id={`modal-update-training-edit-button${i}`}
-                                                        onClick={() => {
-                                                        dispatch(setExercises(exercisesForDay));
-                                                        setIsEditTraining(true);
-                                                        setOpenDrawer(true);
-                                                    }}>
-                                                    <EditOutlined
-                                                    />
-                                                </Button>
-                                            </li>
-                                        ))}
-                                </ul>
-                            ) : (
-                                <Empty
-                                    image='https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg'
-                                    imageStyle={{ height: 32, margin:16 }}
-                                    description={false}
-                                />
-                            )}
-                        </div>
-                        <Button
-                            type='text'
-                            className='modal-btn btn-text'
-                            disabled={!(valueEditTrain != 'Выбор типа тренировки')}
-                            onClick={() => {
-                                dispatch(setExercises(exercisesForDay));
-                                dispatch(addExercises());
-                                exercisesForDay.length === 0
-                                    ? setIsEditTraining(false)
-                                    : setIsEditTraining(true);
-                                setIsEditTraining(false);
-                                showDrawer();
-                            }}
-                        >
-                            Добавить упражнения
-                        </Button>
-                        <Button
-                            type='link'
-                            className='modal-btn'
-                            disabled={exercisesForDay.filter((e) => e.name != '').length === 0}
-                            onClick={save}
-                        >
-                            {isEditTraining ? 'Сохранить изменения' : 'Сохранить'}
-                        </Button>
-                    </>
+                    </React.Fragment>
                 )}
             </div>
             <Drawer
@@ -474,11 +509,11 @@ export const CalendarPage: React.FC = () => {
                 data-test-id='modal-drawer-right'
                 closeIcon={<CloseOutlined data-test-id='modal-drawer-right-button-close' />}
                 title={
-                    <>
-                        {!isEditTraining ? (
-                            <PlusOutlined style={{ marginRight: 6 }} />
-                        ) : (
+                    <React.Fragment>
+                        {isEditTraining ? (
                             <EditOutlined style={{ marginRight: 6 }} />
+                        ) : (
+                            <PlusOutlined style={{ marginRight: 6 }} />
                         )}
                         <h4
                             style={{
@@ -488,9 +523,9 @@ export const CalendarPage: React.FC = () => {
                                 fontWeight: 500,
                             }}
                         >
-                            {!isEditTraining ? 'Добавление упражнений' : 'Редактирование'}
+                            {isEditTraining ? 'Редактирование' : 'Добавление упражнений'}
                         </h4>
-                    </>
+                    </React.Fragment>
                 }
                 placement='right'
                 onClose={closeDrawer}
@@ -508,6 +543,7 @@ export const CalendarPage: React.FC = () => {
                 </div>
                 {exercises.map((e: Exercise, i: number) => (
                     <DrawerForm
+                        // eslint-disable-next-line react/no-array-index-key, no-underscore-dangle
                         key={`${e._id}${i}`}
                         name={e.name}
                         approaches={e.approaches}
@@ -530,7 +566,7 @@ export const CalendarPage: React.FC = () => {
                     </Button>
                     <Button
                         type='text'
-                        style={{ width: `${screenSize>630?'170px':'150px'}` , display: `${!isEditTraining ? 'none' : 'inline'}` }}
+                        style={{ width: `${screenSize>630?'170px':'150px'}` , display: `${isEditTraining ? 'inline' : 'none'}` }}
                         disabled={indexesForDelete.length === 0}
                         onClick={() => {
                             dispatch(removeExercises(indexesForDelete));
@@ -542,6 +578,6 @@ export const CalendarPage: React.FC = () => {
                     </Button>
                 </div>
             </Drawer>
-        </>
+        </React.Fragment>
     );
 };

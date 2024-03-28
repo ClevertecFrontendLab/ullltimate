@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-    HeartFilled,
-    TrophyFilled,
-    IdcardOutlined,
     CalendarTwoTone,
+    HeartFilled,
+    IdcardOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
+    TrophyFilled,
 } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
-import { increment } from '@redux/reducers/user-slice';
-import { saveToken } from '@redux/reducers/token-slice';
-import { useAppDispatch } from '@hooks/typed-react-redux-hooks';
 import { ExitIcon } from '@components/icons/exit-icon';
 import { PATHS } from '@constants/paths';
+import { useAppDispatch } from '@hooks/typed-react-redux-hooks';
+import { saveToken } from '@redux/reducers/token-slice';
+import { resetUser } from '@redux/reducers/user-full-slice';
+import { increment } from '@redux/reducers/user-slice';
+import { useLazyGetTrainingQuery } from '@services/trainings';
+import { Layout, Menu } from 'antd';
 
 import './sider-bar.css';
-import { useLazyGetTrainingQuery } from '@services/trainings';
 
 const { Sider } = Layout;
 
@@ -39,7 +40,7 @@ export const SiderBar: React.FC = () => {
         }
     }
 
-    type key = {
+    type Key = {
         key: string;
     };
 
@@ -48,9 +49,10 @@ export const SiderBar: React.FC = () => {
         dispatch(increment({ email: '', password: '' }));
         dispatch(saveToken(''));
         navigate(PATHS.AUTH);
+        dispatch(resetUser());
     };
 
-    const onClick = ({ key }: key) => {
+    const onClick = ({ key }: Key) => {
         switch (key) {
             case 'exit':
                 logOut();
@@ -58,17 +60,18 @@ export const SiderBar: React.FC = () => {
             case 'calendar':
                 getTrainings()
                     .unwrap()
-                    .then(() => navigate(PATHS.CALENDAR))
-                    .catch((error) => console.log(error));
+                    .then(() => navigate(PATHS.CALENDAR));
                 break;
-            }
+            case 'profile':
+                navigate(PATHS.PROFILE)
+        }
     }
 
     return (
         <div className='sider-wrapper'>
             <div
                 className={`trapezoid-wrapper ${
-                    mobileWidth ? (collapsed ? ' ' : 'trapezoid-wrapper-collapsed') : ''
+                    (mobileWidth && !collapsed) ? 'trapezoid-wrapper-collapsed' : ''
                 }`}
             >
                 <div
@@ -83,11 +86,10 @@ export const SiderBar: React.FC = () => {
             </div>
             <Sider
                 trigger={null}
-                collapsible
+                collapsible={true}
                 collapsed={collapsed}
                 theme='light'
                 width={mobileWidth ? 106 : 208}
-                style={mobileWidth ? { height: '100vh' } : { height: '100%' }}
                 collapsedWidth={widthCollapsed}
                 breakpoint='sm'
                 onBreakpoint={(broken) => changeBreakpoint(broken)}
@@ -103,9 +105,9 @@ export const SiderBar: React.FC = () => {
                         <img
                             src='/fit.svg'
                             alt='logo'
-                            className={`logo-fit ${mobileWidth ? 'logo-collapsed' : ''}`}
+                            className='logo-fit logo-collapsed'
                             style={
-                                mobileWidth ? { opacity: `${collapsed ? 0 : 1}` } : { opacity: 1 }
+                                { opacity: `${(collapsed && mobileWidth) ? 0 : 1}` } 
                             }
                         />
                     </Link>
@@ -119,27 +121,27 @@ export const SiderBar: React.FC = () => {
                     items={[
                         {
                             key: 'calendar',
-                            icon: mobileWidth ? '' : <CalendarTwoTone twoToneColor='#061178' />,
+                            icon: <CalendarTwoTone twoToneColor='#061178' className='menu-item-icon' />,
                             label: collapsed ? '' : 'Календарь',
                         },
                         {
                             key: '2',
-                            icon: mobileWidth ? '' : <HeartFilled style={{ color: '#061178' }} />,
+                            icon:  <HeartFilled style={{ color: '#061178' }} className='menu-item-icon' />,
                             label: collapsed ? '' : 'Тренировки',
                         },
                         {
                             key: '3',
-                            icon: mobileWidth ? '' : <TrophyFilled style={{ color: '#061178' }} />,
+                            icon: <TrophyFilled style={{ color: '#061178' }} className='menu-item-icon' />,
                             label: collapsed ? '' : 'Достижения',
                         },
                         {
-                            key: '4',
-                            icon: mobileWidth ? '' : <IdcardOutlined style={{ color: '#061178' }} />,
+                            key: 'profile',
+                            icon:  <IdcardOutlined style={{ color: '#061178' }} className='menu-item-icon' />,
                             label: collapsed ? '' : 'Профиль',
                         },
                         {
                             key: 'exit',
-                            icon: mobileWidth ? '' : <ExitIcon />,
+                            icon:  <ExitIcon className='menu-item-icon' />,
                             label: collapsed ? '' : 'Выход',
                         },
                     ]}

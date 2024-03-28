@@ -1,14 +1,13 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpointsAPI, urlAPI } from '@constants/api';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { 
-    ResponseLogin, 
-    RequestLogin, 
-    ResponseCheck, 
+    RequestChangePass,
     RequestCheck,
     RequestConfirm, 
+    RequestLogin, 
     ResponseChangePass,
-    RequestChangePass
-} from '@tstypes/api';
+    ResponseCheck, 
+    ResponseLogin } from '@tstypes/api';
 
 export const authAPI = createApi({
     reducerPath: 'authAPI',

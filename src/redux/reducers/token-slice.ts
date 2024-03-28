@@ -1,5 +1,5 @@
 import { RootState } from '@redux/configure-store';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { createSlice,PayloadAction } from '@reduxjs/toolkit';
 
 type TokenState = {
     token: string;
@@ -22,4 +22,4 @@ export const tokenSlice = createSlice({
 export const { saveToken } = tokenSlice.actions;
 export const tokenSelector = (state: RootState) => state.tokenReducer;
 
-export default tokenSlice.reducer;
+export const tokenReducer = tokenSlice.reducer;

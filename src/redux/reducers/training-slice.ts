@@ -1,5 +1,5 @@
 import { RootState } from '@redux/configure-store';
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { createSlice,PayloadAction } from '@reduxjs/toolkit';
 
 export type Exercise = {
     name: string;
@@ -74,4 +74,4 @@ export const trainingSlice = createSlice({
 export const { addExercises, saveTrainingDate, saveTrainingName, setExercises, resetExercises, editExercises, removeExercises, saveTrainingId, setIsImplementation } = trainingSlice.actions;
 export const trainingSelector = (state: RootState) => state.trainingReducer;
 
-export default trainingSlice.reducer;
+export const trainingReducer = trainingSlice.reducer;

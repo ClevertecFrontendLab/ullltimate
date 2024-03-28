@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Form, Modal, Rate, Result } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
-import TextArea from 'antd/lib/input/TextArea';
-import { StarTwoTone } from '@ant-design/icons';
-import { Loader } from '@components/loader/Loader';
 import { AllComments } from '@components/content-comments-page/all-reviews/all-reviews';
 import { EmptyComments } from '@components/content-comments-page/empty/empty-comments';
-import { useCreateReviewMutation, useGetFeedbacksQuery } from '@services/feedbacks';
+import { ModalCreateComment } from '@components/content-comments-page/modal-create-comment/modal-create-comment';
+import { Loader } from '@components/loader/loader';
 import { PATHS } from '@constants/paths';
+import { useGetFeedbacksQuery } from '@services/feedbacks';
 import { Feedbacks } from '@tstypes/feedbacks';
+import { Button, Modal, Result } from 'antd';
+import { Content } from 'antd/lib/layout/layout';
 
 import './comments-page.css';
 
@@ -19,41 +18,16 @@ export const CommentsPage: React.FC = () => {
     const [reviews, setReviews] = useState<Feedbacks[]>();
     const [showAllComments, setShowAllComments] = useState(false);
     const [isModalReview, setIsModalReview] = useState(false);
-    const [isModalResult, setIsModalResult] = useState(false);
     const [isModalError, setIsModalError] = useState(false);
     const showModalError = (): void => setIsModalError(true);
     const handleCancelError = (): void => navigate(PATHS.MAIN);
     const showModalReview = (): void => setIsModalReview(true);
     const isShowAllComments = (): void => setShowAllComments(!showAllComments);
     const handleCancel = (): void => setIsModalReview(false);
-    const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-    const [review, setReview] = useState({ message: '', rating: 0 });
-    const [createReview, { isLoading }] = useCreateReviewMutation();
-    const [isSuccess, setIsSuccess] = useState(false);
-
-    const createComment = async () => {
-        await createReview(review)
-            .unwrap()
-            .then(() => {
-                setReview({ message: '', rating: 0 });
-                setIsModalReview(false);
-                setIsSuccess(true);
-                setIsModalResult(true);
-            })
-            .catch(() => {
-                setIsSuccess(false);
-                setIsModalReview(false);
-                setIsModalResult(true);
-            });
-    };
-
-    const changeRate = (value: number): void => {
-        value > 0 ? setIsSubmitDisabled(false) : setIsSubmitDisabled(true);
-    };
 
     useEffect(() => {
-        error && showModalError();
-        data &&
+        if(error) showModalError();
+        if(data)
             setReviews(
                 [...data].sort(
                     (a: Feedbacks, b: Feedbacks) => new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf(),
@@ -62,9 +36,9 @@ export const CommentsPage: React.FC = () => {
     }, [data, error]);
 
     return (
-        <>
+        <React.Fragment>
             <Content style={{ margin: 24 }}>
-                {(isFetching || isLoading) && <Loader />}
+                {(isFetching) && <Loader />}
                 {reviews &&
                     (reviews.length === 0 ? (
                         <EmptyComments showModalReview={showModalReview} />
@@ -77,99 +51,11 @@ export const CommentsPage: React.FC = () => {
                         />
                     ))}
             </Content>
-            <Modal
-                title='Ваш отзыв'
-                centered
-                maskStyle={{ background: '#799CD41A', backdropFilter: 'blur(5px)' }}
-                open={isModalReview}
-                onCancel={handleCancel}
-                footer={[
-                    <Button
-                        type='primary'
-                        key='submit'
-                        htmlType='submit'
-                        disabled={isSubmitDisabled}
-                        onClick={createComment}
-                        data-test-id='new-review-submit-button'
-                    >
-                        Опубликовать
-                    </Button>,
-                ]}
-            >
-                <div className='modal-form'>
-                    <Form
-                        onValuesChange={(_, allValues) => setReview(allValues)}
-                        initialValues={review}
-                    >
-                        <Form.Item name='rating'>
-                            <Rate
-                                onChange={changeRate}
-                                allowClear
-                                character={<StarTwoTone />}
-                            ></Rate>
-                        </Form.Item>
-                        <Form.Item name='message'>
-                            <TextArea
-                                placeholder='Autosize height with minimum and maximum number of lines'
-                                autoSize={{ minRows: 2, maxRows: 10 }}
-                            />
-                        </Form.Item>
-                    </Form>
-                </div>
-            </Modal>
-            <Modal
-                open={isModalResult}
-                footer={null}
-                centered
-                closable={false}
-                maskStyle={{ background: '#799cd480', backdropFilter: 'blur(5px)' }}
-            >
-                {isSuccess ? (
-                    <div className='modal-success'>
-                        <Result
-                            status='success'
-                            title='Отзыв успешно опубликован'
-                            extra={
-                                <Button type='primary' onClick={() => setIsModalResult(false)}>
-                                    Отлично
-                                </Button>
-                            }
-                        />
-                    </div>
-                ) : (
-                    <div className='modal-error'>
-                        <Result
-                            status='error'
-                            title='Данные не сохранились'
-                            subTitle='Что-то пошло не так. Попробуйте ещё раз.'
-                            extra={[
-                                <Button
-                                    type='primary'
-                                    key='newReview'
-                                    onClick={() => {
-                                        setIsModalResult(false);
-                                        setIsModalReview(true);
-                                    }}
-                                    data-test-id='write-review-not-saved-modal'
-                                >
-                                    Написать отзыв
-                                </Button>,
-                                <Button
-                                    type='text'
-                                    key='close'
-                                    onClick={() => setIsModalResult(false)}
-                                >
-                                    Закрыть
-                                </Button>,
-                            ]}
-                        />
-                    </div>
-                )}
-            </Modal>
+            <ModalCreateComment isModalReview={isModalReview} handleCancel={handleCancel} showModalReview={showModalReview}/>
             <Modal
                 open={isModalError}
                 footer={null}
-                centered
+                centered={true}
                 closable={false}
                 maskStyle={{ background: '#799cd480', backdropFilter: 'blur(5px)' }}
             >
@@ -186,6 +72,6 @@ export const CommentsPage: React.FC = () => {
                     />
                 </div>
             </Modal>
-        </>
+        </React.Fragment>
     );
 };

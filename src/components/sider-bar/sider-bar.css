@@ -51,10 +51,6 @@
     transition: 0.3s;
 }
 
-.logo-collapsed {
-    width: 28px;
-}
-
 .menu .ant-menu-item:not(:last-child) {
     margin-top: var(--unit-16);
 }
@@ -72,6 +68,10 @@
     position: relative;
 }
 
+.sider-wrapper .ant-layout-sider{
+    height: 100%;
+}
+
 @media screen and (max-width: 576px) {
     .sider-wrapper {
         position: fixed;
@@ -80,6 +80,7 @@
     .sider-wrapper .ant-layout-sider {
         position: absolute;
         z-index: 1;
+        height: 100vh;
     }
     .trapezoid {
         top: var(--unit-24);
@@ -108,5 +109,11 @@
     }
     .menu .ant-menu-item:last-child .ant-menu-title-content {
         margin-left: 23px;
+    }
+    .sider-wrapper .menu-item-icon{
+        display: none;
+    }
+    .sider-wrapper .menu .ant-menu-title-content{
+        margin-left: 0;
     }
 }

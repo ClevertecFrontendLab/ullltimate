@@ -1,5 +1,6 @@
-import { HeartFilled, CalendarTwoTone, IdcardOutlined } from '@ant-design/icons';
+import { CalendarTwoTone, HeartFilled, IdcardOutlined } from '@ant-design/icons';
 import { CardInfo } from '@tstypes/types';
+
 import { PATHS } from './paths';
 
 export const contentCards: CardInfo[] = [
@@ -21,7 +22,7 @@ export const contentCards: CardInfo[] = [
         title: 'Заполнить профиль',
         btnText: 'Профиль',
         btnIcon: <IdcardOutlined />,
-        path: '',
-        dataTest: ''
+        path: PATHS.PROFILE,
+        dataTest: 'menu-button-profile'
     },
 ];

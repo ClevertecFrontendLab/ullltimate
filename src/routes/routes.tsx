@@ -1,16 +1,19 @@
 import { Route, Routes } from 'react-router-dom';
-import { AuthPage } from '@pages/auth-page';
-import { MainPage } from '@pages/main-page';
-import { CommentsPage } from '@pages/comments-page';
-import { CalendarPage } from '@pages/calendar-page';
 import { ChangePassword } from '@components/content-auth-page/change-password/change-password';
 import { ConfirmEmail } from '@components/content-auth-page/confirm-email/confirm-email';
-import { CustomTabs } from '@components/content-auth-page/tabs/Tabs';
+import { CustomTabs } from '@components/content-auth-page/tabs/tabs';
 import { CustomLayout } from '@components/layout/layout';
 import { MainLayout } from '@components/layout/main-layout';
 import { Result } from '@components/result/result';
 import { PATHS } from '@constants/paths';
 import { resultData } from '@constants/result-data';
+import { AuthPage } from '@pages/auth-page';
+import { CalendarPage } from '@pages/calendar-page';
+import { CommentsPage } from '@pages/comments-page';
+import { MainPage } from '@pages/main-page';
+import { NotFoundPage } from '@pages/not-found-page';
+import { ProfilePage } from '@pages/profile-page';
+import { SettingsPage } from '@pages/settings-page';
 
 export const routes = (
     <Routes>
@@ -171,6 +174,9 @@ export const routes = (
                 <Route path={PATHS.MAIN} element={<MainPage />} />
                 <Route path={PATHS.FEEDBACKS} element={<CommentsPage />} />
                 <Route path={PATHS.CALENDAR} element={<CalendarPage />} />
+                <Route path={PATHS.PROFILE} element={<ProfilePage />} />
+                <Route path={PATHS.SETTINGS} element={<SettingsPage/>} />
+                <Route path='*' element={<NotFoundPage/>} />
             </Route>
         </Route>
     </Routes>

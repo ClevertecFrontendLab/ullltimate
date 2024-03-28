@@ -1,15 +1,18 @@
-import { combineReducers } from 'redux';
-import { configureStore } from '@reduxjs/toolkit';
 import { createReduxHistoryContext } from 'redux-first-history';
-import { createBrowserHistory } from 'history';
+import { combineReducers,configureStore } from '@reduxjs/toolkit';
 import { authAPI } from '@services/auth';
-import userSlice from './reducers/user-slice';
-import { feedbackAPI } from '@services/feedbacks';
-import tokenSlice from './reducers/token-slice';
-import { trainingAPI } from '@services/trainings';
 import { catalogsAPI } from '@services/catalogs';
-import trainingSlice from './reducers/training-slice';
-import { screenSizeSlice } from './reducers/resize-slice';
+import { feedbackAPI } from '@services/feedbacks';
+import { tariffAPI } from '@services/tariff';
+import { trainingAPI } from '@services/trainings';
+import { userAPI } from '@services/user';
+import { createBrowserHistory } from 'history';
+
+import { screenSizeReducer } from './reducers/resize-slice';
+import {tokenReducer} from './reducers/token-slice';
+import {trainingReducer}from './reducers/training-slice';
+import { userFullReducer } from './reducers/user-full-slice';
+import {userReducer} from './reducers/user-slice';
 
 const { createReduxHistory, routerMiddleware, routerReducer } = createReduxHistoryContext({
     history: createBrowserHistory(),
@@ -19,13 +22,16 @@ export const store = configureStore({
     reducer: combineReducers({
         router: routerReducer,
         [authAPI.reducerPath]: authAPI.reducer,
-        userReducer: userSlice,
+        userReducer,
         [feedbackAPI.reducerPath]: feedbackAPI.reducer,
-        tokenReducer: tokenSlice,
+        tokenReducer,
         [trainingAPI.reducerPath]: trainingAPI.reducer,
         [catalogsAPI.reducerPath]: catalogsAPI.reducer,
-        trainingReducer: trainingSlice,
-        screenSizeReducer: screenSizeSlice.reducer,
+        trainingReducer,
+        screenSizeReducer,
+        [userAPI.reducerPath]: userAPI.reducer,
+        userFullReducer,
+        [tariffAPI.reducerPath] : tariffAPI.reducer,
     }),
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -34,6 +40,8 @@ export const store = configureStore({
             feedbackAPI.middleware,
             trainingAPI.middleware,
             catalogsAPI.middleware,
+            userAPI.middleware,
+            tariffAPI.middleware,
         ),
 });
 

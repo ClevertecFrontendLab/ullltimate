@@ -1,10 +1,22 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { endpointsAPI, urlAPI } from '@constants/api';
 import { store } from '@redux/configure-store';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 type TrainingList = {
     name: string;
     key: string;
+};
+
+export type TariffList = {
+    _id: string;
+    name: string;
+    periods: [
+        {
+            text: string;
+            cost: number;
+            days: number;
+        },
+    ];
 };
 
 export const catalogsAPI = createApi({
@@ -13,9 +25,11 @@ export const catalogsAPI = createApi({
         baseUrl: urlAPI,
         prepareHeaders: (headers) => {
             const token = localStorage.getItem('token') || store.getState().tokenReducer.token;
+
             if (token) {
                 headers.set('Authorization', `Bearer ${token}`);
             }
+
             return headers;
         },
     }),
@@ -25,7 +39,12 @@ export const catalogsAPI = createApi({
                 url: endpointsAPI.catalogs.training,
             }),
         }),
+        getTariffList: build.query<TariffList[], void>({
+            query: () => ({
+                url: endpointsAPI.catalogs.tariff,
+            }),
+        }),
     }),
 });
 
-export const { useGetTrainingListQuery } = catalogsAPI;
+export const { useGetTrainingListQuery, useGetTariffListQuery } = catalogsAPI;

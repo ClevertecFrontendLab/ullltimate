@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Tabs } from 'antd';
-import { LogIn } from '../login/LogIn';
-import { SignUp } from '../signup/SignUp';
 import { PATHS } from '@constants/paths';
+import { Tabs } from 'antd';
+
+import { LogIn } from '../login/login';
+import { SignUp } from '../signup/signup';
 
 import './tabs.css';
 
@@ -14,39 +15,47 @@ type AuthItemsTab = {
 }
 
 export const CustomTabs: React.FC = () => {
-    const [key, setKey] = useState('1');
+    const [key, setKey] = useState('login');
     const navigate = useNavigate();
     const location = useLocation();
     const itemsTab: AuthItemsTab[] = [
         {
-            label: `Вход`,
-            key: '1',
+            label: 'Вход',
+            key: 'login',
             children: <LogIn />,
         },
         {
-            label: `Регистрация`,
-            key: '2',
+            label: 'Регистрация',
+            key: 'signup',
             children: <SignUp />,
         },
     ];
 
+    const onChangeHandler = (k: string) => {
+        setKey(k);
+        if(key === 'signup') {
+            navigate(PATHS.AUTH)
+        } else {
+            navigate(PATHS.REGISTRATION)
+        };
+    }
+
     useEffect(() => {
-        location.pathname === PATHS.REGISTRATION ? setKey('2') : setKey('1');
+        const keyTab = location.pathname === PATHS.REGISTRATION ? 'signup' : 'login'
+
+        setKey(keyTab);
     }, [location.pathname]);
 
     return (
-        <>
+        <React.Fragment>
             <img src='/logo.svg' className='logo' alt='logo' />
             <Tabs
                 activeKey={key}
-                centered
+                centered={true}
                 tabBarGutter={0}
                 items={itemsTab}
-                onChange={(k: string) => {
-                    setKey(k);
-                    key === '2' ? navigate(PATHS.AUTH) : navigate(PATHS.REGISTRATION);
-                }}
+                onChange={onChangeHandler}
             />
-        </>
+        </React.Fragment>
     );
 };

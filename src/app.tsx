@@ -1,7 +1,8 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { HistoryRouter } from 'redux-first-history/rr6';
-import { store, history } from '@redux/configure-store';
+import { history,store } from '@redux/configure-store';
+
 import { routes } from './routes/routes';
 
 const App: React.FC = () => (

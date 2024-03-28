@@ -1,6 +1,5 @@
+import { FieldValue,IRegExp,ValidationMessage } from '@tstypes/validation';
 import { Rule, RuleObject } from 'antd/lib/form';
-import { ValidationMessage, FieldValue } from '@tstypes/validation';
-import { IRegExp } from '@tstypes/validation';
 
 export const validateMessage: ValidationMessage = {
     require: 'Обязательное поле!',
@@ -18,9 +17,10 @@ export const rulesPassword = [
         validator(_: Rule, value: string) {
             if (regPassword.test(value)) {
                 return Promise.resolve();
-            } else {
-                return Promise.reject(new Error(validateMessage.password));
             }
+ 
+                return Promise.reject(new Error(validateMessage.password));
+            
         },
     },
 ];
@@ -30,9 +30,10 @@ export const rulesRepeatPassword = [
         validator(_: Rule, value: string): Promise<void> {
             if (getFieldValue('password') === value) {
                 return Promise.resolve();
-            } else {
-                return Promise.reject(new Error(validateMessage.repeatPassword));
             }
+            
+                return Promise.reject(new Error(validateMessage.repeatPassword));
+            
         },
     }),
 ];

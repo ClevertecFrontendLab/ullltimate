@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button, Form, Grid } from 'antd';
 import { GooglePlusOutlined } from '@ant-design/icons';
 import { endpointsAPI, urlAPI } from '@constants/api';
+import { Button, Form, Grid } from 'antd';
 
 const { useBreakpoint } = Grid;
 
